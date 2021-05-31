@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "views_schema"
+version = "0.1.0"
+description = "A package containing pydantic models used throughout ViEWS 3 for communication between services"
+authors = ["peder2911 <pglandsverk@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pydantic = "^1.8.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
