@@ -82,6 +82,8 @@ class DocumentationEntry(pydantic.BaseModel):
     entries: List["DocumentationEntry"] = []
     data: Dict[str,str] = {}
 
+DocumentationEntry.update_forward_refs()
+
 class PostedDocumentationPage(pydantic.BaseModel):
     """
     The schema for posting a documentationentry to
@@ -97,6 +99,8 @@ class DocumentationPageListEntry(pydantic.BaseModel):
     category: str
     last_edited: datetime.datetime
     author: str = ""
+
+DocumentationPageList = List[DocumentationPageListEntry]
 
 class DocumentationPageDetail(DocumentationPageListEntry, PostedDocumentationPage):
     """
