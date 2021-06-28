@@ -3,7 +3,7 @@ The classes in this module define the (json) schema which services and tools
 use to communicate.
 """
 import datetime
-from typing import List,Optional,Dict
+from typing import List,Optional,Dict,Any
 import pydantic
 
 # =QUERYSET MANAGER MODELS================================
@@ -80,7 +80,7 @@ class DocumentationEntry(pydantic.BaseModel):
     name: str
     path: str = "."
     entries: List["DocumentationEntry"] = []
-    data: Dict[str,str] = {}
+    data: Dict[str,Any] = {}
 
 DocumentationEntry.update_forward_refs()
 
