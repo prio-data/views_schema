@@ -49,20 +49,20 @@ class TransformOperation(Operation):
 class RenameOperation(TransformOperation):
     name = "util.rename"
 
-class Queryset(pydantic.BaseModel):
-    """
-    A set of operations with associated metadata.
-    """
-    class Config:
-        orm_mode = True
-
-    loa: str
+class ListedQueryset(pydantic.BaseModel):
     name: str
+    loa: str
     themes: List[str] = []
+    description: Optional[str] = None
 
-    description: Optional[str]
-
+class PostedQueryset(ListedQueryset):
     operations: List[List[Operation]]
+
+class DetailQueryset(PostedQueryset):
+    pass
+
+class Queryset(DetailQueryset):
+    pass
 
 # =DOCS MODELS============================================
 # These models are accepted and returned by the views_docs
