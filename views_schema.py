@@ -3,8 +3,10 @@ The classes in this module define the (json) schema which services and tools
 use to communicate.
 """
 import datetime
-from typing import List,Optional,Dict,Any
+from typing import List,Optional,Dict,Any,TypeVar, Tuple
 import pydantic
+
+T = TypeVar("T")
 
 # =QUERYSET MANAGER MODELS================================
 # These models are used by the queryset_manager service,
@@ -114,3 +116,10 @@ class ViewsDoc(pydantic.BaseModel):
     """
     entry: DocumentationEntry
     page: Optional[DocumentationPageDetail] = None
+
+# =PARTITIONING MODELS====================================
+# These models are related to time-partitioning. In ViEWS,
+# time-partitions are defined as nested dictionaries.
+
+PartitionDictionaries = Dict[str, Dict[str, T]]
+PartitionTimes = PartitionDictionaries[Tuple[int,int]]
