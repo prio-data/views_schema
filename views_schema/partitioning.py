@@ -11,6 +11,7 @@ import pydantic
 smallest, biggest = (partial(reduce,fn) for fn in (min,max))
 cartesian_product = lambda x: [(k,[v for v in x if v != k]) for k in x]
 preceding = lambda x: [(a,[b for b in x[:i]]) for i,a in enumerate(x)]
+dict_reversed = lambda d: {k:d[k] for k in reversed(d)}
 
 # =PARTITIONING MODELS====================================
 
@@ -117,15 +118,30 @@ class Partition(pydantic.BaseModel):
 
         return same
 
-    def no_overlap(self):
+    def no_overlap(self, rev = False):
+        """
+        Resolves overlap from time-periods.
+        If rev=True, prioritizes later time-periods over earlier.
+        """
         timespans = sorted(list(self.timespans.items()), key = lambda v: v[1].mid)
+
+        if rev:
+            timespans = [*reversed(timespans)]
+            resolve = lambda a,b: TimeSpan(start = a.start, end = b.start-1)
+        else:
+            resolve = lambda a,b: TimeSpan(start = b.end + 1, end = a.end)
+
         new_timespans = {}
         for (timespan_name, timespan), pre in preceding(timespans):
             ts = timespan
             for _,other in pre:
                 if timespan.overlaps(other):
-                    ts = TimeSpan(start = other.end + 1, end = timespan.end)
+                    ts = resolve(timespan,other)
             new_timespans[timespan_name] = ts
+
+        if rev:
+            new_timespans = dict_reversed(new_timespans)
+
         return Partition(timespans = new_timespans)
 
     @property

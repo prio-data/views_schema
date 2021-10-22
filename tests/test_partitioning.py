@@ -143,3 +143,13 @@ class TestPartitioning(TestCase):
 
         self.assertTrue(all(map(lambda p: not p.has_overlap, ps.partitions.values())))
 
+
+    def test_reversed_no_overlap(self):
+        p = (TimeSpan(start = 1, end = 100)
+                .to_partition({"a": .25, "b": .25, "c": .25, "d": .25})
+                .map(lambda s,e: (s-10,e))
+                .no_overlap(rev = True)
+                .map(lambda s,e: (s if s > 1 else 1, e if e < 100 else 100)))
+        self.assertEqual(tuple(p.extent()), (1,100))
+        self.assertEqual([ts.size for ts in p.timespans.values()],[14,24,24,34])
+
