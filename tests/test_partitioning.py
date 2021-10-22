@@ -136,3 +136,10 @@ class TestPartitioning(TestCase):
         self.assertFalse(p.has_overlap)
         self.assertEqual(p.timespans["a"].end, 35)
         self.assertEqual(p.timespans["b"].start, 36)
+
+        ps = (Partitions(partitions = {"A": p})
+            .map(lambda s,e: (s,e+10))
+            .pmap(lambda p: p.no_overlap()))
+
+        self.assertTrue(all(map(lambda p: not p.has_overlap, ps.partitions.values())))
+

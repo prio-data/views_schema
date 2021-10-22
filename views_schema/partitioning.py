@@ -174,6 +174,11 @@ class Partitions(pydantic.BaseModel):
                 name = self.name,
                 partitions = {k:p.map(fn) for k,p in self.partitions.items()})
 
+    def pmap(self, fn: Callable[[Partition],Partition]) -> 'Partitions':
+        return Partitions(
+                name = self.name,
+                partitions = {k: fn(p) for k,p in self.partitions.items()})
+
     def extent(self) -> TimeSpan:
         extents = [p.extent() for p in self.partitions.values()]
         return TimeSpan(
