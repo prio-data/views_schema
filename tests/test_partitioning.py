@@ -122,3 +122,17 @@ class TestPartitioning(TestCase):
             "c":TimeSpan(start = 51, end = 100)
             })
         self.assertEqual(p,tgt)
+
+    def test_overlap_check(self):
+        p = TimeSpan(start = 1, end = 100).to_partition({"a": .25, "b": .25, "c": .25, "d": .25})
+        self.assertFalse(p.has_overlap)
+        self.assertTrue(p.map(lambda s,e: (s,e+10)).has_overlap)
+
+    def test_no_overlap_fix(self):
+        p = (TimeSpan(start = 1, end = 100)
+                .to_partition({"a": .25, "b": .25, "c": .25, "d": .25})
+                .map(lambda s,e: (s,e+10))
+                .no_overlap())
+        self.assertFalse(p.has_overlap)
+        self.assertEqual(p.timespans["a"].end, 35)
+        self.assertEqual(p.timespans["b"].start, 36)

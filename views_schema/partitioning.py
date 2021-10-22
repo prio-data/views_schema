@@ -9,6 +9,8 @@ from typing import Optional, Dict, Tuple, Callable, List
 import pydantic
 
 smallest, biggest = (partial(reduce,fn) for fn in (min,max))
+cartesian_product = lambda x: [(k,[v for v in x if v != k]) for k in x]
+preceding = lambda x: [(a,[b for b in x[:i]]) for i,a in enumerate(x)]
 
 # =PARTITIONING MODELS====================================
 
@@ -45,6 +47,12 @@ class TimeSpan(pydantic.BaseModel):
         """
         return self.union(other) is not None
 
+    def after(self, other: 'TimeSpan') -> bool:
+        return self.start > other.start and self.end > other.end
+
+    def before(self, other: 'TimeSpan') -> bool:
+        return self.start < other.start and self.end < other.end
+
     def union(self,other: 'TimeSpan')-> Optional['TimeSpan']:
         """
         Returns a timespan which is the union of self and other.
@@ -55,6 +63,14 @@ class TimeSpan(pydantic.BaseModel):
             return TimeSpan(start = start, end = end)
         else:
             return None
+
+    @property
+    def mid(self):
+        return int(self.start + self.end / 2)
+
+    @property
+    def size(self):
+        return int(self.end - self.start)
 
     def times(self):
         """
@@ -100,6 +116,26 @@ class Partition(pydantic.BaseModel):
                 same &= self.timespans[timespan_name] == other.timespans[timespan_name]
 
         return same
+
+    def no_overlap(self):
+        timespans = sorted(list(self.timespans.items()), key = lambda v: v[1].mid)
+        new_timespans = {}
+        for (timespan_name, timespan), pre in preceding(timespans):
+            ts = timespan
+            for _,other in pre:
+                if timespan.overlaps(other):
+                    ts = TimeSpan(start = other.end + 1, end = timespan.end)
+            new_timespans[timespan_name] = ts
+        return Partition(timespans = new_timespans)
+
+    @property
+    def has_overlap(self):
+        overlap_reduce = lambda x,xs: reduce(lambda a,b: a|b.overlaps(x), xs, False)
+        has = False
+        combinations = cartesian_product(self.timespans.values())
+        for timespan,others in combinations:
+            has |= overlap_reduce(timespan, others)
+        return has
 
     def map(self, fn: Callable[[int,int],Tuple[int,int]]) -> 'Partition':
         """
