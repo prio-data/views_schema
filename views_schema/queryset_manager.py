@@ -13,7 +13,7 @@ class Operation(pydantic.BaseModel):
     May be a DatabaseOperation or a TransformOperation.
     """
     class Config:
-        orm_mode = True
+        from_attributes = True
 
     namespace: str
     name: str
@@ -27,7 +27,7 @@ class DatabaseOperation(Operation):
     aggregation, the name of an aggregation function.
     """
     class Config:
-        orm_mode = True
+        from_attributes = True
 
     namespace: str = "base"
     arguments: List[str] = ["values"]
@@ -39,7 +39,7 @@ class TransformOperation(Operation):
     applied to the subsequent data in the path.
     """
     class Config:
-        orm_mode = True
+        from_attributes = True
 
     namespace: str = "trf"
 
