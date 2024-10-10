@@ -29,7 +29,7 @@ class DatabaseOperation(Operation):
     class Config:
         orm_mode = True
 
-    namespace = "base"
+    namespace: str = "base"
     arguments: List[str] = ["values"]
 
 class TransformOperation(Operation):
@@ -41,10 +41,10 @@ class TransformOperation(Operation):
     class Config:
         orm_mode = True
 
-    namespace = "trf"
+    namespace: str = "trf"
 
 class RenameOperation(TransformOperation):
-    name = "util.rename"
+    name: str = "util.rename"
 
 class ListedQueryset(pydantic.BaseModel):
     name: str
