@@ -182,7 +182,7 @@ class Partition(pydantic.BaseModel):
         return self._cont_times() == self._times()
 
 class Partitions(pydantic.BaseModel):
-    name: Optional[str]
+    name: Optional[str] = None
     partitions: Dict[str, Partition]
 
     def map(self, fn: Callable[[int,int],Tuple[int,int]]) -> 'Partitions':
