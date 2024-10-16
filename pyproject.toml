@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "views_schema"
-version = "2.3.2"
+version = "2.3.3"
 description = "A package containing pydantic models used throughout ViEWS 3 for communication between services"
 authors = ["peder2911 <pglandsverk@gmail.com>"]
 readme = "README.md"
